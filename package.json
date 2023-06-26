@@ -2,10 +2,22 @@
   "name": "botfortelegram",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "bot.js",
   "scripts": {
+    "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "amir nobari",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "ioredis": "^5.3.2",
+    "nodemon": "^1.14.9",
+    "openai": "^3.3.0",
+    "telegraf": "^4.12.2",
+    "telegraf-session-local": "^2.1.1",
+    "telegraf-session-mongodb": "^2.0.2",
+    "telegraf-session-redis": "^5.1.0"
+  }
 }
