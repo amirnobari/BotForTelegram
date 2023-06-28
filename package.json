@@ -4,16 +4,20 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "start": "nodemon",
+    "start": "node bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "amir nobari",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
+    "lowdb": "^6.0.1",
+    "mongodb": "^5.6.0",
+    "mongoose": "^7.3.1",
     "nodemon": "^1.14.9",
     "openai": "^3.3.0",
     "telegraf": "^4.12.2",
-    "telegraf-session-local": "^2.1.1"
+    "telegraf-session-local": "^2.1.1",
+    "telegraf-session-mongodb": "^2.0.2"
   }
 }
