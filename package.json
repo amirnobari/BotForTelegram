@@ -10,14 +10,13 @@
   "author": "amir nobari",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "lowdb": "^6.0.1",
     "mongodb": "^5.6.0",
     "mongoose": "^7.3.1",
     "nodemon": "^1.14.9",
     "openai": "^3.3.0",
-    "telegraf": "^4.12.2",
-    "telegraf-session-local": "^2.1.1",
-    "telegraf-session-mongodb": "^2.0.2"
+    "telegraf": "^4.12.2"
   }
 }
