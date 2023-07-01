@@ -14,7 +14,13 @@ const showRoadMapWebsites = require('./road-map/showRoadMapWebsites')
 const showResumeWebsites = require('./resume-build/showResumeWebsites')
 const showJobWebsites = require('./job-websites/showJobWebsites')
 const showErrorHandlerWebsites = require('./error-handler/showErrorHandlerWebsites')
-
+const showJavaResources = require('./educational-resources/showJavaResources')
+const showNodeJsResources = require('./educational-resources/showNodeJsResources')
+const showReactResources = require('./educational-resources/showReactResources')
+const showِDjangoResources = require('./educational-resources/showDjangoResources')
+const showِMongoDbResources = require('./educational-resources/showMongoDbResources')
+const showِDockerResources = require('./educational-resources/showDockerResources')
+const showِNestJsResources = require('./educational-resources/showNestJsResources')
 
 // Register start command handler from startHandler.js
 bot.start((ctx) => startHandler.handleStartCommand(ctx, bot))
@@ -35,10 +41,10 @@ bot.action('javascript', (ctx) => {
 
 //اضافه کردن "تمام دوره های رایگان الکوریتم"
 bot.action('algorithm', (ctx) => {
-showAlgorithmResources.showAlgorithmResources(ctx)
+    showAlgorithmResources.showAlgorithmResources(ctx)
 })
 //بخش ساخت رزومه
-bot.action('resume',(ctx)=>{
+bot.action('resume', (ctx) => {
     showResumeWebsites.showResumeWebsites(ctx)
 })
 
@@ -53,20 +59,54 @@ bot.action('articles', (ctx) => {
 })
 
 //اضافه کردن بخش رود مپ
-bot.action('road_map',(ctx) =>{
+bot.action('road_map', (ctx) => {
     showRoadMapWebsites.showRoadMapWebsites(ctx)
 })
 
 //اضافه کردن بخش جاب 
-bot.action('job',(ctx) =>{
+bot.action('job', (ctx) => {
     showJobWebsites.showJobWebsites(ctx)
 })
 
 //اضافه کردن بخش خطاها
-bot.action('error',(ctx) =>{
+bot.action('error', (ctx) => {
     showErrorHandlerWebsites.showErrorHandlerWebsites(ctx)
 })
 
+//اضافه کردن بخش جاوا به تمام دوره های رایگان
+bot.action('Java', (ctx) => {
+    showJavaResources.showJavaResources(ctx)
+})
+
+//اضافه کردن بخش نود جی اس
+bot.action('Node.js', (ctx) => {
+    showNodeJsResources.showNodeJsResources(ctx)
+})
+
+//اضافه کردن بخش ری اکت
+bot.action('React', (ctx) => {
+    showReactResources.showReactResources(ctx)
+})
+
+//اضافه کردن بخش جانگو
+bot.action('Django', (ctx) => {
+    showِDjangoResources.showِDjangoResources(ctx)
+})
+
+//اضافه کردن بخش مانگو دی بی
+bot.action('MongoDB', (ctx) => {
+    showِMongoDbResources.showِMongoDbResources(ctx)
+})
+
+//اضافه کردن بخش داکر
+bot.action('Docker', (ctx) => {
+    showِDockerResources.showِDockerResources(ctx)
+})
+
+//اضافه کردن بخش نست جی اس
+bot.action('Nest.js', (ctx) => {
+    showِNestJsResources.showِNestJsResources(ctx)
+})
 // اضافه کردن گزینه "لینک دوره پایتون"
 bot.action(/^python_course_link_(.*)$/, (ctx) => {
     const [, course] = ctx.match
@@ -108,6 +148,49 @@ bot.action(/^error_link_(.*)$/, (ctx) => {
     const [, course] = ctx.match
     showErrorHandlerWebsites.redirectToshowErrorHandlerWebsites(ctx, course)
 })
+
+//اضافه کردن ادرس سایتهای جاوا
+bot.action(/^Java_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showJavaResources.redirectToshowJavaResources(ctx, course)
+})
+
+//اضافه کردن ادرس سایتهای نود جی اس
+bot.action(/^Node.js_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showNodeJsResources.redirectToshowNodeJsResources(ctx, course)
+})
+
+//اضافه کردن سایتهای ری اکت
+bot.action(/^React_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showReactResources.redirectToshowReactResources(ctx, course)
+})
+
+//اضافه کردن سایتهای جانگو
+bot.action(/^Django_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showDjangoResources.redirectToshowDjangoResources(ctx, course)
+})
+
+//اضافه کردن سایت های مانگو دی بی 
+bot.action(/^MongoDB_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showMongoDbResources.redirectToshowMongoDbResources(ctx, course)
+})
+
+//اضافه کردن سایت های داکر
+bot.action(/^Docker_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showDockerResources.redirectToshowDockerResources(ctx, course)
+})
+
+//اضافه کردن سایتهای نست جی اس
+bot.action(/^Nest.js_link_(.*)$/, (ctx) => {
+    const [, course] = ctx.match
+    showNestJsResources.redirectToshowNestJsResources(ctx, course)
+})
+
 
 bot.launch()
 console.log('Bot is running!')
