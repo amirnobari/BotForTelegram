@@ -2,10 +2,11 @@
   "name": "botfortelegram",
   "version": "1.0.0",
   "description": "",
-  "main": "bot.js",
+  "main": "serverbot.js",
   "scripts": {
-    "start": "node bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node serverbot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "obfuscate": "javascript-obfuscator ./bot.js --output ./serverbot.js --config ./obfuscator-config.json"
   },
   "author": "amir nobari",
   "license": "ISC",
@@ -18,5 +19,8 @@
     "nodemon": "^1.14.9",
     "openai": "^3.3.0",
     "telegraf": "^4.12.2"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.0.2"
   }
 }
