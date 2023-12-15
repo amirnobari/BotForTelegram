@@ -1,21 +1,53 @@
-const { Markup } = require('telegraf')
-
-const handleStartCommand = (ctx) => {
-  const username = ctx.from.username
-  ctx.reply(`کاربر ${username} به ربات دنیای برنامه نویسی خوش آمدی`, Markup.inlineKeyboard([
-    [Markup.button.callback(' منابع آموزشی برنامه نویسی', 'resources')],
-    [Markup.button.callback('کانال و گروه های برنامه نویسی', 'chanel')],
-    [Markup.button.callback('وب سایت هایی برای حل خطاها در کد نویسی', 'error')],
-    [Markup.button.callback('مقالات برنامه نویسی', 'articles')],
-    [Markup.button.callback('وب سایت هایی برای تمرین و یادگیری برنامه نویسی', 'practice')],
-    [Markup.button.callback('وب سایت هایی برای پیدا کردن رود مپ جهت یادگیری برنامه نویسی', 'road_map')],
-    [Markup.button.callback('وب سایت هایی برای ساخت رزومه(رایگان)', 'resume')],
-    [Markup.button.callback('وب سایت و اپلکیشن هایی جهت پیدا کردن شغل برای برنامه نویسی', 'job')],
-    [Markup.button.callback('در مورد سازنده ربات بیشتر بدانید', 'about_me')],
-
-  ]))
-}
+const handleStartCommand = ctx => {
+  const firstName = ctx.from.first_name;
+  ctx.editMessageText(
+    `سـلام ${firstName}, بـه ربـات دنیـای بـرنـامه نـویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـونی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها،کانال و گروه ها،وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`,
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: 'آموزش های برنامه نویسی', callback_data: 'resources' },
+            { text: 'کامیونیتی برنامه نویسی', callback_data: 'chanel' },
+          ],
+          [
+            {
+              text: 'منابع رفع اشکال کد',
+              callback_data: 'error',
+            },
+            { text: 'مقالات برنامه نویسی', callback_data: 'articles' },
+          ],
+          [
+            {
+              text: 'مراجع تمرین کدنویسی',
+              callback_data: 'practice',
+            },
+            {
+              text: 'منابع رودمپ',
+              callback_data: 'road_map',
+            },
+          ],
+          [
+            {
+              text: 'مراجع ساخت رزومه',
+              callback_data: 'resume',
+            },
+            {
+              text: 'محیط های فریلنسری',
+              callback_data: 'job',
+            },
+          ],
+          [
+            {
+              text: 'درباره ما',
+              callback_data: 'about_us',
+            },
+          ],
+        ],
+      },
+    }
+  );
+};
 
 module.exports = {
   handleStartCommand: handleStartCommand,
-}
+};
