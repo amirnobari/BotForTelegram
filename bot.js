@@ -26,35 +26,14 @@ const showِNestJsResources = require('./educational-resources/showNestJsResourc
 const showCanelresources = require('./chanel/showChanelResources')
 
 // BLACKLIST SECTION
-//
-// 1) Blacklist Management
-const blacklistSessions = new Map()
-
-const getAttempts = userId => blacklistSessions.get(userId)?.attempts || 0
-
-const incrementAttempts = userId => {
-  const currentAttempts = getAttempts(userId)
-  blacklistSessions.set(userId, { attempts: currentAttempts + 1 })
-}
-//
-// 2) Blacklist Middleware
 const blacklistedUsers = ['5396468910']
+
 const blacklistCheckMiddleware = async (ctx, next) => {
   try {
     const userId = ctx.from?.id?.toString()
 
     if (blacklistedUsers.includes(userId)) {
-      const userAttempts = getAttempts(userId)
-
-      if (userAttempts >= 3) {
-        return
-      }
-
-      incrementAttempts(userId)
-
-      return ctx.reply(
-        '❌ شما قادر به استفاده از ربات نمی باشید!\nبرو اتاقت و بشین به کارای بدت فک کن👋🏻'
-      )
+      return ctx.reply('❌ شما قادر به استفاده از ربات نمی‌باشید!')
     }
 
     await next()
@@ -62,12 +41,14 @@ const blacklistCheckMiddleware = async (ctx, next) => {
     console.error('Blacklist Check Error:', error)
   }
 }
+
 bot.use(blacklistCheckMiddleware)
 
 // RATE LIMIT (in-memory)
 const rateLimits = new Map()
 const rateLimitDuration = moment.duration(24, 'hours')
 
+// Initialize rate limit for user
 const initializeRateLimit = userId => {
   rateLimits.set(userId, [
     moment(),
@@ -75,6 +56,8 @@ const initializeRateLimit = userId => {
   ])
 }
 
+
+// Update rate limit for user
 const updateRateLimit = (userId, currentTime, requestCount) => {
   rateLimits.set(userId, [moment(currentTime), requestCount])
 }
@@ -99,10 +82,8 @@ const rateLimitMiddleware = async (ctx, next) => {
       initializeRateLimit(userId)
     }
 
-    if (requestCount >= 5) {
-      return ctx.reply(
-        '❌ شما به دلیل ارسال تعداد زیادی از درخواست های مکرر، ریت لیمیت شدید!'
-      )
+    if (requestCount >= 5 && ctx.callbackQuery?.data !== 'start') {
+      return ctx.reply('❌ شما به دلیل ارسال تعداد زیادی از درخواست های مکرر، ریت لیمیت شدید!')
     }
 
     updateRateLimit(userId, currentTime, requestCount + 1)
@@ -112,19 +93,16 @@ const rateLimitMiddleware = async (ctx, next) => {
     console.error('Rate Limiting Error:', error)
   }
 }
+
 bot.use(rateLimitMiddleware)
 
 // Start Command
 bot.start(ctx => {
-  // Check Blacklist
   const userId = ctx.from.id
   if (blacklistedUsers.includes(userId)) {
-    // Blacklisted Welcomer.
-    return ctx.reply(
-      '❌ بدلیل دغدغه های زیاد شما برای مورد استفاده قرار گرفتن ربات، شما قادر به استفاده از ربات نمیباشید ☹'
-    )
+    return ctx.reply('❌ بدلیل دغدغه های زیاد شما برای مورد استفاده قرار گرفتن ربات، شما قادر به استفاده از ربات نمی‌باشید ☹')
   }
-  // Normal User Welcomer.
+
   const firstName = ctx.from.first_name
   const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نـویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـونی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`
 
@@ -153,6 +131,10 @@ bot.start(ctx => {
       inline_keyboard: keyboardOptions,
     },
   })
+  if (ctx.callbackQuery?.data === 'start') {
+    blacklistedUsers.push(userId.toString())
+    ctx.reply('شما برای استفاده از ربات بلاک شدید!')
+  }
 })
 
 // About Me section
@@ -335,7 +317,7 @@ bot.action('back', ctx => {
   }
 })
 
-// Invalid Attemps Section
+// Invalid Attempts Section
 const undefinedMessage = `مـتوجـه نشـدم! لطـفا از دسـتورات ربـات یـا دکـمه هـا اسـتفاده کنـید. ❤`
 const MAX_INVALID_ATTEMPTS = 5
 const TIMEOUT_DURATION_HOURS = 20
