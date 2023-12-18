@@ -1,9 +1,13 @@
 const { Telegraf } = require('telegraf');
-const moment = require('moment');
 require('dotenv').config();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const session = {};
 
+const {
+  handleText,
+  handleWhitelist,
+} = require('./invalid-attempts/invalidAttempts');
+const blacklistModule = require('./blacklist/blacklist');
 const startHandler = require('./start-handler/startHandler');
 const aboutUs = require('./about-us/aboutUs');
 const resources = require('./educational-resources/resources');
@@ -25,108 +29,13 @@ const showِDockerResources = require('./educational-resources/showDockerResourc
 const showِNestJsResources = require('./educational-resources/showNestJsResources');
 const showCanelresources = require('./chanel/showChanelResources');
 
-// BLACKLIST SECTION
-//
-// 1) Blacklist Management
-const blacklistSessions = new Map();
-
-const getAttempts = userId => blacklistSessions.get(userId)?.attempts || 0;
-
-const incrementAttempts = userId => {
-  const currentAttempts = getAttempts(userId);
-  blacklistSessions.set(userId, { attempts: currentAttempts + 1 });
-};
-//
-// 2) Blacklist Middleware
-const blacklistedUsers = ['5396468910'];
-const blacklistCheckMiddleware = async (ctx, next) => {
-  try {
-    const userId = ctx.from?.id?.toString();
-
-    if (blacklistedUsers.includes(userId)) {
-      const userAttempts = getAttempts(userId);
-
-      if (userAttempts >= 3) {
-        return;
-      }
-
-      incrementAttempts(userId);
-
-      return ctx.reply(
-        '❌ شما قادر به استفاده از ربات نمی باشید!\nبرو اتاقت و بشین به کارای بدت فک کن👋🏻'
-      );
-    }
-
-    await next();
-  } catch (error) {
-    console.error('Blacklist Check Error:', error);
-  }
-};
-bot.use(blacklistCheckMiddleware);
-
-// RATE LIMIT (in-memory)
-const rateLimits = new Map();
-const rateLimitDuration = moment.duration(24, 'hours');
-
-const initializeRateLimit = userId => {
-  rateLimits.set(userId, [
-    moment(),
-    0, // requestCount
-  ]);
-};
-
-const updateRateLimit = (userId, currentTime, requestCount) => {
-  rateLimits.set(userId, [moment(currentTime), requestCount]);
-};
-
-const rateLimitMiddleware = async (ctx, next) => {
-  try {
-    const userId = ctx.from?.id?.toString();
-
-    if (!userId) {
-      throw new Error('User ID not available');
-    }
-
-    if (!rateLimits.has(userId)) {
-      initializeRateLimit(userId);
-    }
-
-    const currentTime = moment();
-    const [lastRequestTime, requestCount] = rateLimits.get(userId);
-    const timeDifference = currentTime.diff(lastRequestTime, 'milliseconds');
-
-    if (timeDifference > rateLimitDuration.asMilliseconds()) {
-      initializeRateLimit(userId);
-    }
-
-    if (requestCount >= 5) {
-      return ctx.reply(
-        '❌ شما به دلیل ارسال تعداد زیادی از درخواست های مکرر، ریت لیمیت شدید!'
-      );
-    }
-
-    updateRateLimit(userId, currentTime, requestCount + 1);
-
-    await next();
-  } catch (error) {
-    console.error('Rate Limiting Error:', error);
-  }
-};
-bot.use(rateLimitMiddleware);
+// Blacklist Check Middleware
+bot.use(blacklistModule.blacklistCheckMiddleware);
 
 // Start Command
 bot.start(ctx => {
-  // Check Blacklist
-  const userId = ctx.from.id;
-  if (blacklistedUsers.includes(userId)) {
-    // Blacklisted Welcomer.
-    return ctx.reply(
-      '❌ بدلیل دغدغه های زیاد شما برای مورد استفاده قرار گرفتن ربات، شما قادر به استفاده از ربات نمیباشید ☹'
-    );
-  }
-  // Normal User Welcomer.
   const firstName = ctx.from.first_name;
-  const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نـویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـونی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`;
+  const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـوانی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`;
 
   const keyboardOptions = [
     [
@@ -152,6 +61,7 @@ bot.start(ctx => {
     reply_markup: {
       inline_keyboard: keyboardOptions,
     },
+    force_reply: true,
   });
 });
 
@@ -273,150 +183,12 @@ bot.action('Nest.js', ctx => {
 bot.action('back', ctx => {
   const currentSection = session[ctx.from.id];
   if (currentSection) {
-    switch (currentSection) {
-      case 'about_us':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'resources':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'chanel':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'python':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'javascript':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'algorithm':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'resume':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'practice':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'articles':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'road_map':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'job':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'error':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'Java':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'Node.js':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'React':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'Django':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'MongoDB':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'Docker':
-        startHandler.handleStartCommand(ctx);
-        break;
-      case 'Nest.js':
-        startHandler.handleStartCommand(ctx);
-        break;
-    }
+    startHandler.handleStartCommand(ctx);
   }
 });
 
-// Invalid Attemps Section
-const undefinedMessage = `مـتوجـه نشـدم! لطـفا از دسـتورات ربـات یـا دکـمه هـا اسـتفاده کنـید. ❤`;
-const MAX_INVALID_ATTEMPTS = 5;
-const TIMEOUT_DURATION_HOURS = 20;
-const TIMEOUT_DURATION = TIMEOUT_DURATION_HOURS * 60 * 60 * 1000;
-const TIME_FRAME = 10 * 60 * 1000;
+// Invalid Attempts Section
+bot.use(handleWhitelist);
+bot.on('text', async ctx => await handleText(ctx));
 
-const invalidAttempts = {};
-const attemptsWhitelist = {
-  97917629: true, // AmirNobari
-  1104378812: true, // Arian
-  987654321: false, // test-account
-};
-
-bot.on('text', async ctx => {
-  try {
-    const userId = ctx.from.id;
-
-    if (attemptsWhitelist[userId]) {
-      ctx.reply(`${undefinedMessage}\n[ادمین مود]`);
-      return;
-    }
-
-    invalidAttempts[userId] = invalidAttempts[userId] || {
-      attempts: 0,
-      lastAttemptTime: 0,
-    };
-
-    const currentTime = Date.now();
-
-    if (currentTime - invalidAttempts[userId].lastAttemptTime > TIME_FRAME) {
-      invalidAttempts[userId].attempts = 0;
-    }
-
-    invalidAttempts[userId].attempts += 1;
-    invalidAttempts[userId].lastAttemptTime = currentTime;
-
-    if (invalidAttempts[userId].attempts >= MAX_INVALID_ATTEMPTS) {
-      if (
-        !invalidAttempts[userId].timeout ||
-        currentTime > invalidAttempts[userId].timeout
-      ) {
-        invalidAttempts[userId].timeout = currentTime + TIMEOUT_DURATION;
-      }
-      const timeRemaining = Math.floor(
-        (invalidAttempts[userId].timeout - currentTime) / (60 * 60 * 1000)
-      );
-      await ctx.reply(
-        `درحـال حاضـر شـما تایـم اوت شـده اید! زمـان باقـی مـانـده تا اتمـام تایـم اوت: ${timeRemaining} سـاعت. ⏳`
-      );
-    } else {
-      await ctx.reply(undefinedMessage);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// Whitelist Handler for InvalidAttempts
-bot.use((ctx, next) => {
-  try {
-    const userId = ctx.from.id;
-
-    if (attemptsWhitelist[userId]) {
-      return next();
-    }
-
-    if (invalidAttempts[userId] && invalidAttempts[userId].timeout) {
-      const currentTime = Date.now();
-
-      if (currentTime > invalidAttempts[userId].timeout) {
-        invalidAttempts[userId] = { attempts: 0, lastAttemptTime: 0 };
-      }
-    }
-
-    next();
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// Launch the bot
-bot.launch().then(() => {
-  console.log('Bot is running!');
-});
+bot.launch();
