@@ -1,3 +1,43 @@
+<<<<<<< HEAD
+const { Telegraf } = require('telegraf');
+require('dotenv').config();
+const bot = new Telegraf(process.env.BOT_TOKEN);
+const session = {};
+
+const {
+  handleText,
+  handleWhitelist,
+} = require('./invalid-attempts/invalidAttempts');
+const blacklistModule = require('./blacklist/blacklist');
+const startHandler = require('./start-handler/startHandler');
+const aboutUs = require('./about-us/aboutUs');
+const resources = require('./educational-resources/resources');
+const showPythonResources = require('./educational-resources/showPythonResources');
+const showJavaScriptResources = require('./educational-resources/showJavaScriptResources');
+const showAlgorithmResources = require('./educational-resources/showAlgorithmResources');
+const practiceWebsites = require('./practice-websites/practiceWebsites');
+const articlesWebsites = require('./article-websites/articleWebsites');
+const showRoadMapWebsites = require('./road-map/showRoadMapWebsites');
+const showResumeWebsites = require('./resume-build/showResumeWebsites');
+const showJobWebsites = require('./job-websites/showJobWebsites');
+const showErrorHandlerWebsites = require('./error-handler/showErrorHandlerWebsites');
+const showJavaResources = require('./educational-resources/showJavaResources');
+const showNodeJsResources = require('./educational-resources/showNodeJsResources');
+const showReactResources = require('./educational-resources/showReactResources');
+const showِDjangoResources = require('./educational-resources/showDjangoResources');
+const showِMongoDbResources = require('./educational-resources/showMongoDbResources');
+const showِDockerResources = require('./educational-resources/showDockerResources');
+const showِNestJsResources = require('./educational-resources/showNestJsResources');
+const showCanelresources = require('./chanel/showChanelResources');
+
+// Blacklist Check Middleware
+bot.use(blacklistModule.blacklistCheckMiddleware);
+
+// Start Command
+bot.start(ctx => {
+  const firstName = ctx.from.first_name;
+  const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـوانی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`;
+=======
 const { Telegraf } = require('telegraf')
 const moment = require('moment')
 require('dotenv').config()
@@ -105,6 +145,7 @@ bot.start(ctx => {
 
   const firstName = ctx.from.first_name
   const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نـویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـونی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`
+>>>>>>> master
 
   const keyboardOptions = [
     [
@@ -130,12 +171,18 @@ bot.start(ctx => {
     reply_markup: {
       inline_keyboard: keyboardOptions,
     },
+<<<<<<< HEAD
+    force_reply: true,
+  });
+});
+=======
   })
   if (ctx.callbackQuery?.data === 'start') {
     blacklistedUsers.push(userId.toString())
     ctx.reply('شما برای استفاده از ربات بلاک شدید!')
   }
 })
+>>>>>>> master
 
 // About Me section
 bot.action('about_us', ctx => {
@@ -255,6 +302,9 @@ bot.action('Nest.js', ctx => {
 bot.action('back', ctx => {
   const currentSection = session[ctx.from.id]
   if (currentSection) {
+<<<<<<< HEAD
+    startHandler.handleStartCommand(ctx);
+=======
     switch (currentSection) {
       case 'about_us':
         startHandler.handleStartCommand(ctx)
@@ -314,10 +364,17 @@ bot.action('back', ctx => {
         startHandler.handleStartCommand(ctx)
         break
     }
+>>>>>>> master
   }
 })
 
 // Invalid Attempts Section
+<<<<<<< HEAD
+bot.use(handleWhitelist);
+bot.on('text', async ctx => await handleText(ctx));
+
+bot.launch();
+=======
 const undefinedMessage = `مـتوجـه نشـدم! لطـفا از دسـتورات ربـات یـا دکـمه هـا اسـتفاده کنـید. ❤`
 const MAX_INVALID_ATTEMPTS = 5
 const TIMEOUT_DURATION_HOURS = 20
@@ -402,3 +459,4 @@ bot.use((ctx, next) => {
 bot.launch().then(() => {
   console.log('Bot is running!')
 })
+>>>>>>> master
