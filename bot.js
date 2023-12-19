@@ -29,11 +29,35 @@ const showِDockerResources = require('./educational-resources/showDockerResourc
 const showِNestJsResources = require('./educational-resources/showNestJsResources')
 const showCanelresources = require('./chanel/showChanelResources')
 
+const MAX_START_ATTEMPTS = 5 // تعداد بیشینه مجاز برای /start
+const TIMEOUT_START_DURATION_HOURS = 10 // زمان مجاز برای بلاک کردن /start به ساعت
+
+// در بالای فایل، به کد اینجا دسترسی داریم
+const startAttempts = {}
+
+
 // Blacklist Check Middleware
 bot.use(blacklistModule.blacklistCheckMiddleware)
 
 // Start Command
 bot.start(ctx => {
+  const userId = ctx.from.id
+  startAttempts[userId] = startAttempts[userId] || 0
+
+  if (startAttempts[userId] >= MAX_START_ATTEMPTS) {
+    const currentTime = Date.now()
+    const timeoutDuration = TIMEOUT_START_DURATION_HOURS * 60 * 60 * 1000
+    const timeoutEnd = currentTime + timeoutDuration
+
+    // تعیین زمان پایان تایم‌اوت
+    startAttempts[userId] = timeoutEnd
+
+    ctx.reply(`شما برای مدت ${TIMEOUT_START_DURATION_HOURS} ساعت بلاک شده‌اید.`)
+    return
+  }
+
+  startAttempts[userId]++;
+
   const firstName = ctx.from.first_name
   const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـوانی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`
 
