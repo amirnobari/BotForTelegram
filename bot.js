@@ -42,7 +42,11 @@ bot.use(blacklistModule.blacklistCheckMiddleware)
 // Start Command
 bot.start(ctx => {
   const userId = ctx.from.id
-  startAttempts[userId] = startAttempts[userId] || 0
+
+  // اضافه کردن شرط برای بررسی بلاک نشدن افراد خاص
+  const isWhitelisted = [97917629, 1104378812].includes(userId)
+  if (!isWhitelisted) {
+    startAttempts[userId] = startAttempts[userId] || 0
 
   if (startAttempts[userId] >= MAX_START_ATTEMPTS) {
     const currentTime = Date.now()
@@ -57,7 +61,7 @@ bot.start(ctx => {
   }
 
   startAttempts[userId]++;
-
+}
   const firstName = ctx.from.first_name
   const welcomeMessage = `سـلام ${firstName}, به ربـات دنیـای بـرنـامه نویسـی خـیلی خوش اومـدی! ❤\nبا اسـتفـاده از دکمـه های زیر میتـوانی به تـمامی منـابع و مـراجع رایـگان برنـامه نـویسـی مثـل آمـوزش ها، کانال و گروه ها، وب سایت و مقاله ها دسـترسـی داشـته باشـی. ✨💻`
 

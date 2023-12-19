@@ -17,10 +17,11 @@ const handleText = async ctx => {
   try {
     const userId = ctx.from.id
 
-    if (attemptsWhitelist[userId]) {
+    if (attemptsWhitelist[userId] === true || [97917629, 1104378812].includes(userId)) {
       ctx.reply(`${undefinedMessage}\n[ادمین مود]`)
       return
     }
+
 
     invalidAttempts[userId] = invalidAttempts[userId] || {
       attempts: 0,
